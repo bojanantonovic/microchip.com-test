@@ -71,6 +71,10 @@ public class SearchApp extends Application {
 	}
 
 	public static void main(final String[] args) {
+		final var availableProcessors = Runtime.getRuntime().availableProcessors(); // change this number if you want to change the number of threads
+		System.out.println("availableProcessors: " + availableProcessors);
+		System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(availableProcessors));
+
 		launch(args);
 	}
 }
