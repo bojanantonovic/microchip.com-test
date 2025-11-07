@@ -11,13 +11,22 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class SearchApp extends Application {
 
-	private static final int TOTAL_COMBINATIONS = (int) Math.pow(26, 4);
+	private static final String[] COMBINATORICAL_ARRAY;
+
+	static {
+		try {
+			COMBINATORICAL_ARRAY = CsvIO.readCombinationsFromCsvFile();
+		} catch (IOException e) {
+			System.err.println("Fehler beim Lesen der CSV-Datei." + e);
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public void start(final Stage stage) {
@@ -50,10 +59,7 @@ public class SearchApp extends Application {
 			protected List<String> call() throws Exception {
 				//System.out.println("Suche: " + string);
 				final String searchString = string.toUpperCase();
-				final String[] array = IntStream.rangeClosed(0, TOTAL_COMBINATIONS) // absichtlich ungecached
-						.mapToObj(SearchApp::numberToString) //
-						.toArray(String[]::new);
-				return Arrays.stream(array) //
+				return Arrays.stream(COMBINATORICAL_ARRAY) //
 						.parallel() //
 						.filter(searchString::equals) //
 						.toList();
@@ -62,17 +68,6 @@ public class SearchApp extends Application {
 		task.setOnSucceeded(e -> list.getItems().setAll(task.getValue()));
 		task.setOnFailed(e -> list.getItems().setAll("Fehler: " + task.getException()));
 		new Thread(task, "search").start();
-	}
-
-	private static String numberToString(int number) {
-		final char[] chars = new char[4];
-
-		for (int i = 0; i < 4; i++) {
-			chars[i] = (char) ('A' + number % 26);
-			number /= 26;
-		}
-
-		return new String(chars);
 	}
 
 	public static void main(final String[] args) {
