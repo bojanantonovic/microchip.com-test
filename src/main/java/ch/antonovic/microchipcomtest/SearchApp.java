@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class SearchApp extends Application {
+
+	private static final int TOTAL_COMBINATIONS = (int) Math.pow(26, 4);
+
 	@Override
 	public void start(final Stage stage) {
 		final TextField textField = new TextField();
@@ -47,7 +50,7 @@ public class SearchApp extends Application {
 			protected List<String> call() throws Exception {
 				//System.out.println("Suche: " + string);
 				final String searchString = string.toUpperCase();
-				final String[] array = IntStream.rangeClosed(0, 26 * 26 * 26 * 26) // absichtlich ungecached
+				final String[] array = IntStream.rangeClosed(0, TOTAL_COMBINATIONS) // absichtlich ungecached
 						.mapToObj(SearchApp::numberToString) //
 						.toArray(String[]::new);
 				return Arrays.stream(array) //
